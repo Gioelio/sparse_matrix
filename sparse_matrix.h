@@ -38,19 +38,16 @@ private:
     position_t _n_rows;
 
 public:
-
     /**
-     @brief Costruttore di default
-
-     Costruttore che istanzia una matrice sparsa 10 x 10;
+     * @brief Costruttore di default
      */
     sparse_matrix(): _head(nullptr), _size(0), _n_columns(10), _n_rows(10) {}
     /**
-     @brief Costruttore con valore di default passato come argomento
-
-     Costruttore che prende un valore di default che viene ritornato quando nella cella da leggere non è presente il valore
-
-     @param default_value
+     * @brief Costruttore con valore di default passato come argomento
+     *
+     * Costruttore che prende un valore di default che viene ritornato quando nella cella da leggere non è presente il valore
+     *
+     * @param default_value
      */
     explicit sparse_matrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0) {}
 
@@ -109,7 +106,20 @@ public:
 
     position_t rows() const { return _n_rows;}
 
+    /**
+     * @brief Metodo per settare il valore di una cella
+     *
+     * Il metodo imposta il valore della cella in posizione (x, y) con il valore passato come parametro.
+     *
+     *
+     * @param x posizione sulle righe della matrice
+     * @param y posizione sulle colonne della matrice
+     * @param value valore a cui viene impostata la cella indicata in posizione (x, y)
+     */
     void set(position_t x, position_t y, const value_t &value){
+        assert(x < _n_rows);
+        assert(y < _n_columns);
+
         element* current(_head);
 
         while (_size != 0 && current->next != nullptr){
