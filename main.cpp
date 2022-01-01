@@ -10,7 +10,7 @@ struct predicate{
 };
 
 template<typename T, typename F>
-int evaluate (sparse_matrix<T> mat, F pred) {
+int evaluate (const sparse_matrix<T> &mat, F pred) {
     unsigned int cont = 0;
     for(typename sparse_matrix<T>::const_iterator iter = mat.begin(); iter != mat.end(); ++iter) {
         std::cout << iter->value << pred(iter->value) << std::endl;
@@ -45,8 +45,6 @@ void test_fondamentali(){
 
     std::cout << "test assegnamento" << std::endl;
     def = copy;
-    def.print_test();
-    copy.print_test();
     assert(def.size() == copy.size());
     assert(def.default_value() == copy.default_value());
 }
@@ -114,6 +112,7 @@ void test_sparse_matrix_iterator() {
     mat_iter.set(1,4, 100);
 
     sparse_matrix<int>::const_iterator iter = mat_iter.begin();
+    //todo: aggiungere i test di pre e post incremento
 }
 
 void test_specific_class(){
@@ -126,11 +125,12 @@ void test_evaluate(){
 
     //mat.set(1,1, -1);
     mat.set(2, 2, 6);
+    mat.set(1, 1, -2);
+    mat.set(3, 3, -1);
 
     predicate p;
 
-    std::cout << evaluate(mat, p);
-    //assert(evaluate(mat, p) == 1);
+    assert(evaluate(mat, p) == 2);
 
 }
 

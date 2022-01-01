@@ -22,16 +22,44 @@ private:
         position_t x;
         position_t y;
         value_t value;
-        element* next;
 
-        element(): next(nullptr) {}
-        element(position_t x, position_t y, const value_t &value): x(x), y(y), value(value), next(nullptr) {}
-        element(const element &other): x(other.x), y(other.y), value(other.value), next(nullptr) {} //todo: valutare se ha senso copiare il next
+        element() {}
+        element(position_t x, position_t y, const value_t &value): x(x), y(y), value(value){}
+        element(const element &other): x(other.x), y(other.y), value(other.value) {}
+
+        element& operator=(const element &other) {
+            element tmp(other);
+            std::swap(other.x, this->x);
+            std::swap(other.y, this->y);
+            std::swap(other.value, this->value);
+
+            return *this;
+        }
 
         ~element() {}
     };
 
-    element* _head;
+    struct nodo {
+        element el;
+        nodo* next;
+
+        nodo(): next(nullptr), el(nullptr) {}
+        nodo(const element e): el(e), next(nullptr) {}
+        nodo(const nodo &other): el(other.el), next(nullptr) {} //todo: ragionare per il next cosa fare
+        nodo(position_t x, position_t y, const value_t &value): next(nullptr), el(x, y, value) {}
+
+        nodo& operator=(const nodo &other) {
+            nodo tmp(other);
+            std::swap(this->el, other.el);
+            std::swap(this->next, other.next);
+
+            return *this;
+        }
+
+        ~nodo() { next = nullptr; }
+    };
+
+    nodo* _head;
     size_t _size;
     value_t _default_value;
     position_t _n_columns;
@@ -83,14 +111,15 @@ public:
      */
     sparse_matrix(const sparse_matrix &other): _head(nullptr), _size(other._size), _default_value(other._default_value), _n_columns(other._n_columns), _n_rows(other._n_rows) {
 
-        element* iter_other = other._head;
+        nodo* iter_other = other._head;
 
         if(iter_other != nullptr) {
-            this->_head = new element(*iter_other);
-            element* iter_curr = this->_head;
+            this->_head = new nodo(*iter_other);
+            nodo* iter_curr = this->_head;
+            iter_other = iter_other->next;
 
             while(iter_other != nullptr){
-                iter_curr->next = new element(*iter_other);
+                iter_curr->next = new nodo(*iter_other);
                 iter_curr = iter_curr->next;
                 iter_other = iter_other->next;
             }
@@ -128,11 +157,10 @@ public:
         _n_columns = 0;
         _size = 0;
 
-        element* current(_head);
+        nodo* current(_head);
 
-        //ho preferito fare un while sui puntatori, perché la size indica il numero di celle con un dato valido
         while(current != nullptr){
-            element* tmp(current);
+            nodo* tmp(current);
             current = current->next;
             delete tmp;
         }
@@ -188,25 +216,24 @@ public:
         assert(x < _n_rows); //TODO: lanciare eccezioni
         assert(y < _n_columns);
 
-        element* current(_head);
+        nodo* current(_head);
 
         if(_size != 0){
-            std::cout << "cerco l'el" << std::endl;
             while (current->next != nullptr){
-                if(current->x == x && current->y == y) {
-                    current->value = value;
+                if(current->el.x == x && current->el.y == y) {
+                    current->el.value = value;
                     return;
                 }
                 current = current->next;
             }
 
-            if(current->x == x && current->y == y){
-                current->value = value;
+            if(current->el.x == x && current->el.y == y){
+                current->el.value = value;
                 return;
             }
         }
 
-        element* el = new element(x, y, value);
+        nodo* el = new nodo(x, y, value);
 
         if(_size == 0)
             _head = el;
@@ -216,21 +243,20 @@ public:
     }
 
     void print_test(){
-        element* current(_head);
+        nodo* current(_head);
 
         while (current != nullptr){
-            std::cout << current->x << ", " << current->y << ", " <<  current->value << std::endl;
             current = current->next;
         }
     }
 
 
     const value_t& operator()(position_t x, position_t y) const {
-        element* current(_head);
+        nodo* current(_head);
 
         while (current != nullptr){
-            if(current->x == x && current->y == y)
-                return current->value;
+            if(current->el.x == x && current->el.y == y)
+                return current->el.value;
             current = current->next;
         }
 
@@ -245,10 +271,10 @@ public:
         // gli altri 2 sono puntatori e reference e qui sono settati const, mentre in iterator no.
     public:
         typedef std::forward_iterator_tag iterator_category;
-        typedef element                   value_type;
+        typedef element                      value_type;
         typedef ptrdiff_t                 difference_type;
-        typedef const element*            pointer;
-        typedef const element&            reference;
+        typedef const element*               pointer;
+        typedef const element&               reference;
 
 
         const_iterator(): ptr(nullptr) {}
@@ -256,7 +282,8 @@ public:
         const_iterator(const const_iterator &other): ptr(other.ptr) {}
 
         const_iterator& operator=(const const_iterator &other) {
-            ptr = other.ptr;
+            const_iterator tmp(other);
+            std::swap(this->ptr, other.ptr);
             return *this;
         }
 
@@ -265,18 +292,18 @@ public:
 
         // Ritorna il dato riferito dall'iteratore (dereferenziamento)
         reference operator*() const {
-            return *ptr;
+            return *ptr->el;
         }
 
         // Ritorna il puntatore al dato riferito dall'iteratore
         pointer operator->() const {
-            return ptr;
+            return &ptr->el;
         }
 
         // Operatore di iterazione post-incremento
         const_iterator operator++(int) {
             const_iterator tmp(*this);
-            *ptr = ptr->next;
+            ptr = ptr->next;
             return tmp;
         }
 
@@ -299,7 +326,7 @@ public:
     private:
         //Dati membro
 
-        const element* ptr;
+        const nodo* ptr;
 
         // La classe container deve essere messa friend dell'iteratore per poter
         // usare il costruttore di inizializzazione.
@@ -307,7 +334,7 @@ public:
 
         // Costruttore privato di inizializzazione usato dalla classe container
         // tipicamente nei metodi begin e end
-        const_iterator(const element* p): ptr(p) {}
+        const_iterator(const nodo* p): ptr(p) {}
 
         // !!! Eventuali altri metodi privati
 
