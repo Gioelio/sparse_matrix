@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 template<typename T>
 class sparse_matrix {

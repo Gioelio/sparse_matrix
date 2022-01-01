@@ -2,6 +2,8 @@
 // Created by gioele fiorenza on 29/12/21.
 //
 #include "sparse_matrix.h"
+#include <assert.h>
+#include <iostream>
 
 struct predicate{
     bool operator() (int value){
