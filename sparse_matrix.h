@@ -29,9 +29,9 @@ private:
 
         element& operator=(const element &other) {
             element tmp(other);
-            std::swap(other.x, this->x);
-            std::swap(other.y, this->y);
-            std::swap(other.value, this->value);
+            std::swap(tmp.x, this->x);
+            std::swap(tmp.y, this->y);
+            std::swap(tmp.value, this->value);
 
             return *this;
         }
@@ -50,8 +50,8 @@ private:
 
         nodo& operator=(const nodo &other) {
             nodo tmp(other);
-            std::swap(this->el, other.el);
-            std::swap(this->next, other.next);
+            std::swap(this->el, tmp.el);
+            std::swap(this->next, tmp.next);
 
             return *this;
         }
@@ -283,7 +283,7 @@ public:
 
         const_iterator& operator=(const const_iterator &other) {
             const_iterator tmp(other);
-            std::swap(this->ptr, other.ptr);
+            std::swap(this->ptr, tmp.ptr);
             return *this;
         }
 
