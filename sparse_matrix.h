@@ -8,14 +8,15 @@
 #include <algorithm>
 #include <iostream>
 #include <assert.h>
+#include "myexception.h"
 
 template<typename T>
 class sparse_matrix {
 
 public:
     typedef T value_t;
-    typedef unsigned int size_t;
-    typedef unsigned int position_t;
+    typedef int size_t;
+    typedef int position_t;
 
 private:
 
@@ -45,7 +46,7 @@ private:
         nodo* next;
 
         nodo(): next(nullptr), el(nullptr) {}
-        nodo(const element e): el(e), next(nullptr) {}
+        explicit nodo(const element e): el(e), next(nullptr) {}
         nodo(const nodo &other): el(other.el), next(nullptr) {} //todo: ragionare per il next cosa fare
         nodo(position_t x, position_t y, const value_t &value): next(nullptr), el(x, y, value) {}
 
@@ -212,10 +213,12 @@ public:
      * @param x posizione sulle righe della matrice
      * @param y posizione sulle colonne della matrice
      * @param value valore a cui viene impostata la cella indicata in posizione (x, y)
+     * @throw my_out_of_range exception: viene lanciata se x e y sforano le dimensioni della matrice
      */
     void set(position_t x, position_t y, const value_t &value){
-        assert(x < _n_rows); //TODO: lanciare eccezioni
-        assert(y < _n_columns);
+
+        if(x >= _n_rows ||  y >= _n_columns)
+            throw my_out_of_range("Il valore degli indici supera il range impostato");
 
         nodo* current(_head);
 

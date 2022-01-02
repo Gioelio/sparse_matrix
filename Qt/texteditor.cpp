@@ -4,7 +4,6 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QTextCharFormat>
-#include <iostream> //TODO: da rimuovere
 #include <string>
 
 TextEditor::TextEditor(QWidget *parent)
@@ -109,6 +108,7 @@ void TextEditor::on_btn_find_clicked()
     find_dialog find;
 
     connect(&find, &find_dialog::find_btn_clicked, this, &TextEditor::search_text);
+    connect(this, &TextEditor::str_found, &find, &find_dialog::on_str_found);
 
     find.setModal(true);
     find.exec();
@@ -137,6 +137,11 @@ void TextEditor::search_text(QString match_str, bool match_case)
     cursor.setCharFormat(format);
 
     format.setBackground(Qt::yellow);
+
+    if(found == std::string::npos)
+        emit str_found(true);
+    else
+        emit str_found(false);
 
     while(found != std::string::npos){
         cursor.setPosition(found, QTextCursor::MoveAnchor);

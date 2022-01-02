@@ -19,6 +19,8 @@ public:
 signals:
     void find_btn_clicked(QString match_str, bool match_case);
 
+public slots:
+    void on_str_found(bool is_found);
 
 private slots:
     void on_checkBox_stateChanged(int arg1);

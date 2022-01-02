@@ -17,6 +17,9 @@ public:
     TextEditor(QWidget *parent = nullptr);
     ~TextEditor();
 
+signals:
+    void str_found(bool is_found);
+
 public slots:
     void search_text(QString match_str, bool match_case);
 

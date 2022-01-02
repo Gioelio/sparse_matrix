@@ -118,7 +118,7 @@ void test_sparse_matrix_iterator() {
 }
 
 void test_specific_class(){
-
+    //todo: aggiungere questo test
 }
 
 void test_evaluate(){
