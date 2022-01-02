@@ -1,7 +1,3 @@
-//
-// Created by gioele fiorenza on 29/12/21.
-//
-
 #ifndef SPARSE_MATRIX_SPARSE_MATRIX_H
 #define SPARSE_MATRIX_SPARSE_MATRIX_H
 
@@ -17,8 +13,6 @@ public:
     typedef T value_t;
     typedef int size_t;
     typedef int position_t;
-
-private:
 
     struct element {
         position_t x;
@@ -41,13 +35,15 @@ private:
         ~element() {}
     };
 
+private:
+
     struct nodo {
         element el;
         nodo* next;
 
         nodo(): next(nullptr), el(nullptr) {}
         explicit nodo(const element e): el(e), next(nullptr) {}
-        nodo(const nodo &other): el(other.el), next(nullptr) {} //todo: ragionare per il next cosa fare
+        nodo(const nodo &other): el(other.el), next(nullptr) {}
         nodo(position_t x, position_t y, const value_t &value): next(nullptr), el(x, y, value) {}
 
         nodo& operator=(const nodo &other) {
@@ -91,11 +87,11 @@ public:
      *
      * Costruttore che consente di scegliere la dimensione della matrice e il suo valore di default
      *
-     * @param default_value
-     * @param n_cols
-     * @param n_rows
+     * @param default_value valore di default per le celle senza un valore assegnato
+     * @param n_rows numero di righe della matrice
+     * @param n_cols numero di colonne della matrice
      */
-    sparse_matrix(const value_t &default_value, const position_t n_cols, const position_t n_rows):
+    sparse_matrix(const value_t &default_value, const position_t n_rows, const position_t n_cols):
         _default_value(default_value),
         _head(nullptr),
         _size(0),
@@ -115,16 +111,22 @@ public:
 
         nodo* iter_other = other._head;
 
-        if(iter_other != nullptr) {
-            this->_head = new nodo(*iter_other);
-            nodo* iter_curr = this->_head;
-            iter_other = iter_other->next;
+        try {
 
-            while(iter_other != nullptr){
-                iter_curr->next = new nodo(*iter_other);
-                iter_curr = iter_curr->next;
+            if (iter_other != nullptr) {
+                this->_head = new nodo(*iter_other);
+                nodo *iter_curr = this->_head;
                 iter_other = iter_other->next;
+
+                while (iter_other != nullptr) {
+                    iter_curr->next = new nodo(*iter_other);
+                    iter_curr = iter_curr->next;
+                    iter_other = iter_other->next;
+                }
             }
+        } catch(...){
+            clear();
+            throw;
         }
     }
 
@@ -155,17 +157,7 @@ public:
      *
      */
     ~sparse_matrix() {
-        _n_rows = 0;
-        _n_columns = 0;
-        _size = 0;
-
-        nodo* current(_head);
-
-        while(current != nullptr){
-            nodo* tmp(current);
-            current = current->next;
-            delete tmp;
-        }
+        clear();
     }
 
     /**
@@ -296,7 +288,7 @@ public:
 
         // Ritorna il dato riferito dall'iteratore (dereferenziamento)
         reference operator*() const {
-            return *ptr->el;
+            return ptr->el;
         }
 
         // Ritorna il puntatore al dato riferito dall'iteratore
@@ -304,54 +296,56 @@ public:
             return &ptr->el;
         }
 
-        // Operatore di iterazione post-incremento
         const_iterator operator++(int) {
             const_iterator tmp(*this);
             ptr = ptr->next;
             return tmp;
         }
 
-        // Operatore di iterazione pre-incremento
         const_iterator& operator++() {
             ptr = ptr->next;
             return *this;
         }
 
-        // Uguaglianza
         bool operator==(const const_iterator &other) const {
             return ptr == other.ptr;
         }
 
-        // Diversita'
         bool operator!=(const const_iterator &other) const {
             return !(ptr == other.ptr);
         }
 
     private:
-        //Dati membro
-
         const nodo* ptr;
 
-        // La classe container deve essere messa friend dell'iteratore per poter
-        // usare il costruttore di inizializzazione.
         friend class sparse_matrix;
 
-        // Costruttore privato di inizializzazione usato dalla classe container
-        // tipicamente nei metodi begin e end
         const_iterator(const nodo* p): ptr(p) {}
 
-        // !!! Eventuali altri metodi privati
+    };
 
-    }; // classe const_iterator
-
-    // Ritorna l'iteratore all'inizio della sequenza dati
     const_iterator begin() const {
         return const_iterator(_head);
     }
 
-    // Ritorna l'iteratore alla fine della sequenza dati
     const_iterator end() const {
         return const_iterator(nullptr);
+    }
+
+private:
+    void clear(){
+        nodo* current(_head);
+
+        while(current != nullptr){
+            nodo* tmp(current);
+            current = current->next;
+            delete tmp;
+        }
+
+        _head = nullptr;
+        _n_rows = 0;
+        _n_columns = 0;
+        _size = 0;
     }
 
 

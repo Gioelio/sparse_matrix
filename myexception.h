@@ -1,7 +1,3 @@
-//
-// Created by gioele fiorenza on 02/01/22.
-//
-
 #ifndef SPARSE_MATRIX_MYEXCEPTION_H
 #define SPARSE_MATRIX_MYEXCEPTION_H
 

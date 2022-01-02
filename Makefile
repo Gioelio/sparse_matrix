@@ -7,7 +7,7 @@ main.o: main.cpp sparse_matrix.h
 	g++ -o main.o -c main.cpp -std=c++0x
 
 myexception.o: myexception.cpp myexception.h
-	g++ -o myexception.o myexception.cpp -std=c++0x
+	g++ -o myexception.o -c myexception.cpp -std=c++0x
 
 .PHONY:
 clean:

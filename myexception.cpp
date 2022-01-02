@@ -1,7 +1,3 @@
-//
-// Created by gioele fiorenza on 02/01/22.
-//
-
 #include "myexception.h"
 
 /**
