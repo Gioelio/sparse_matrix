@@ -11,4 +11,4 @@ myexception.o: myexception.cpp myexception.h
 
 .PHONY:
 clean:
-	rm main.o
+	rm main.o myexception.o a.out

@@ -186,7 +186,7 @@
             <string notr="true">color: red;</string>
            </property>
            <property name="text">
-            <string>Non è stata trovata nessuna occorrenza</string>
+            <string>Nessuna occorrenza trovata</string>
            </property>
           </widget>
          </item>
