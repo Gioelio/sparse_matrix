@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <assert.h>
+#include <iterator>
 #include "myexception.h"
 
 template<typename T>
