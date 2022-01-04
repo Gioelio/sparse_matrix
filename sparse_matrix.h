@@ -28,7 +28,7 @@ public:
             element tmp(other);
             std::swap(tmp.x, this->x);
             std::swap(tmp.y, this->y);
-            std::swap(tmp.value, this->value);
+            this->value = other.value;
 
             return *this;
         }
