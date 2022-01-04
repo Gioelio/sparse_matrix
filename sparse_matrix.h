@@ -1,10 +1,10 @@
 #ifndef SPARSE_MATRIX_SPARSE_MATRIX_H
 #define SPARSE_MATRIX_SPARSE_MATRIX_H
 
-#include <algorithm>
-#include <iostream>
-#include <assert.h>
-#include <iterator>
+#include <iostream> //cout
+#include <assert.h> //assert
+#include <iterator> // std::forward_iterator_tag
+#include <cstddef> // std::ptrdiff_t
 #include "myexception.h"
 
 template<typename T>

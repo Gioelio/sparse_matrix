@@ -1,7 +1,7 @@
 #ifndef SPARSE_MATRIX_MYEXCEPTION_H
 #define SPARSE_MATRIX_MYEXCEPTION_H
 
-#include <stdexcept>
+#include <stdexcept> //std::range_error
 
 class my_out_of_range: public std::range_error {
 public:

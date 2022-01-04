@@ -1,7 +1,6 @@
 #include "sparse_matrix.h"
-#include <assert.h>
-#include <iostream>
-#include <algorithm>
+#include <assert.h> //assert
+#include <iostream> //cout
 
 struct predicate{
     bool operator() (int value){
