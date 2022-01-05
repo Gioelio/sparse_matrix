@@ -68,20 +68,20 @@ public:
     /**
      * @brief Costruttore di default
      *
-     * La dimensione della matrice di default è 100x100
+     * La dimensione della matrice di default è 0x0
      */
-    sparse_matrix(): _head(nullptr), _size(0), _n_columns(100), _n_rows(100) {}
+    sparse_matrix(): _head(nullptr), _size(0), _n_columns(0), _n_rows(0), _default_value() {}
 
     /**
      * @brief Costruttore con valore di default passato come argomento
      *
      * Costruttore che imposta il valore di default da ritornare quando non ci sono valori nella cella letta
      *
-     * La dimensione della matrice di default è 100x100
+     * La dimensione della matrice di default è 0x0
      *
      * @param default_value
      */
-    explicit sparse_matrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0), _n_columns(100), _n_rows(100) {}
+    explicit sparse_matrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0), _n_columns(0), _n_rows(0) {}
 
     /**
      * @brief Costruttore per settare la dimensione e il valore di default della matrice

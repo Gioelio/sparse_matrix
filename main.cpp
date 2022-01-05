@@ -16,6 +16,9 @@ int evaluate (const sparse_matrix<T> &mat, F pred) {
             cont++;
     }
 
+    if(pred(mat.default_value()))
+        cont += (mat.columns() * mat.rows()) - mat.size();
+
     return cont;
 }
 
@@ -47,7 +50,7 @@ void test_fondamentali(){
     assert(def.size() == 0);
 
     std::cout << "test ctor secondario" << std::endl;
-    sparse_matrix<int> sec(10);
+    sparse_matrix<int> sec(10, 100, 100);
     assert(sec.size() == 0);
     int valore = sec.default_value();
     valore++;
@@ -71,7 +74,7 @@ void test_sparse_matrix() {
     std::cout << "--- TEST METODI sparse_matrix ---" << std::endl;
 
     std::cout << "test set value" << std::endl;
-    sparse_matrix<int> set(-1);
+    sparse_matrix<int> set(-1, 100, 100);
     assert(set.size() == 0);
     set.set(1, 1, 30);
     assert(set.size() == 1);
@@ -186,20 +189,21 @@ void test_custom_class(){
 
 void test_evaluate(){
     std::cout << "--- TEST evaluate predicate ---" << std::endl;
-    sparse_matrix<int> mat(-1, 20, 20);
+    sparse_matrix<int> mat(-1, 2, 2);
 
     //mat.set(1,1, -1);
-    mat.set(2, 2, 6);
-    mat.set(1, 1, -2);
-    mat.set(3, 3, -1);
+    mat.set(1, 0, 6);
+    mat.set(0, 0, -2);
+    mat.set(0, 1, -1);
 
+    //valori minori di 5
     predicate p;
 
-    std::cout << "test value returned from evaluate" << std::endl;
-    assert(evaluate(mat, p) == 2);
-
-    mat.set(2, 2, -1);
+    std::cout << "test value returned from evaluate" << evaluate(mat, p) <<  std::endl;
     assert(evaluate(mat, p) == 3);
+
+    mat.set(1, 1, 10);
+    assert(evaluate(mat, p) == 2);
 
 }
 
