@@ -8,9 +8,9 @@
 #include "myexception.h"
 
 /**
- * @brief Classe che gestisce una sparse matrix
+ * @brief Gestisce una sparse matrix
  *
- * La sparse matrix si occupa di mantenere in memoria solamente le celle di dati effettivamente inserite dall'utente,
+ * Mantiene in memoria solamente le celle di dati effettivamente inserite dall'utente,
  * se la cella non è presente viene ritornato il valore di default dello stesso tipo di T
  *
  * @tparam T tipo del dato che viene memorizzato nelle cella della matrice o viene ritornato come tipo di default
@@ -19,20 +19,24 @@ template<typename T>
 class sparse_matrix {
 
 public:
+    /** tipo associato al tipo T templato */
     typedef T value_t;
+    /** tipo usato per la dimensione della matrice */
     typedef int size_t;
+    /** tipo usato per identificare le coordinate all'interno della matrice */
     typedef int position_t;
 
     /**
-     * @brief Stuttura che contiene la posizione x e y dell'elemento nella matrice e il suo valore in value
+     * @struct element
+     * @brief Memorizza la posizione x e y dell'elemento nella matrice e il suo valore in value
      *
-     * L'element viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
-     * relative al posizionamento dell'elemento all'interno della matrice
+     * L'elmeento viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
+     * relative al suo posizionamento all'interno della matrice
      */
     struct element {
-        position_t x;
-        position_t y;
-        value_t value;
+        position_t x; //!< posizione sulle righe della matrice
+        position_t y; //!< posizione sulle colonne della matrice
+        value_t value; //!< valore memorizzato dalla cella
 
         /**
          * @brief Costruttore di default di element
@@ -64,7 +68,7 @@ public:
         /**
          * @bief operatore di assegnamento
          *
-         * Operatore che crea una copia del valore di element in una variabile dello stesso tipo
+         * Crea una copia del valore di element in una variabile dello stesso tipo
          *
          * @param other parametro dell'elemento da copiare
          * @return viene ritornata l'istanza di this (parametro prefisso dell'operatore = )
@@ -80,9 +84,6 @@ public:
 
         /**
          * @brief Distruttore
-         *
-         * Elimina il contenuto della classe, ma dato che non contiene puntatori, alla sua uscita di scope vengono
-         * deallocati i dati in automatico
          */
         ~element() {}
     };
@@ -91,14 +92,15 @@ private:
 
 
     /**
+     * @struct nodo
      * @brief struttura interna della sparse matrix per la gestione delle celle
      *
      * La struttua del nodo contiene un elemento, che corrisponde al dato effettivo e al puntatore al nodo successivo
      *
      */
     struct nodo {
-        element el;
-        nodo* next;
+        element el; //!< valore dell'elemento
+        nodo* next; //!< puntatore al nodo successivo
 
         /**
          * @brief Costruttore di default di nodo
@@ -129,7 +131,7 @@ private:
         /**
          * @brief Costruttore secondario che prende tutti i parametri
          *
-         * Costruttore secondario che inizializza il nodo passando tutti i parametri nel costruttore
+         * Inizializza il nodo passando tutti i parametri nel costruttore
          *
          * @param x posizione sulle colonne della matrice
          * @param y posizione sulle righe della matrice
@@ -140,7 +142,7 @@ private:
         /**
          * @brief operatore di assegnamento
          *
-         * Operatore che crea una copia del nodo e la assegna all'istanza di this (parametro prefisso di operator =).
+         * Crea una copia del nodo e la assegna all'istanza di this (parametro prefisso di operator =).
          * Elimina in automatico il puntatore memorizzato all'interno di this
          *
          * @param other nodo di cui viene effettuata la copia
@@ -156,34 +158,29 @@ private:
 
         /**
          * @brief Distruttore
-         *
-         * l'elemento viene eliminato in automatico in quanto attributo di nodo, e il next viene impostato a nullptr,
-         * l'eliminazione è a cura di sparse matrix
-         *
          */
         ~nodo() { next = nullptr; }
     };
 
-    nodo* _head;
-    size_t _size;
-    value_t _default_value;
-    position_t _n_columns;
-    position_t _n_rows;
+    nodo* _head; //!< puntatore al primo elemento della lista
+    size_t _size; //!< numero di elementi effettivamente memorizzati all'interno della lista
+    value_t _default_value; //!< valore che viene ritornato se la cella cercata non esiste in memoria
+    position_t _n_columns; //!< numero di colonne della matrice logica
+    position_t _n_rows; //!< numero di righe della matrice logica
 
 public:
     /**
      * @brief Costruttore di default
      *
-     * La dimensione della matrice di default è 0x0
+     * La dimensione di default della matrice è 0x0
      */
     sparse_matrix(): _head(nullptr), _size(0), _n_columns(0), _n_rows(0), _default_value() {}
 
     /**
      * @brief Costruttore con valore di default passato come argomento
      *
-     * Costruttore che imposta il valore di default da ritornare quando non ci sono valori nella cella letta
-     *
-     * La dimensione della matrice di default è 0x0
+     * Imposta il valore di default da ritornare quando non ci sono valori nella cella letta.
+     * Imposta 0x0 come dimensione della matrice
      *
      * @param default_value
      */
@@ -192,7 +189,7 @@ public:
     /**
      * @brief Costruttore per settare la dimensione e il valore di default della matrice
      *
-     * Costruttore che consente di scegliere la dimensione della matrice e il suo valore di default
+     * Imposta la dimensione della matrice e il suo valore di default
      *
      * @param default_value valore di default per le celle senza un valore assegnato
      * @param n_rows numero di righe della matrice
@@ -206,13 +203,12 @@ public:
         _n_rows(n_rows){}
 
 
-
     /**
      * @brief Costruttore di copia
      *
      * Prende una sparse matrix e ne genera una copia scollegata contenente gli stessi dati di quella originale
      *
-     * @param other
+     * @param other sparse matrix di cui fare la copia
      */
     sparse_matrix(const sparse_matrix &other): _head(nullptr), _size(other._size), _default_value(other._default_value), _n_columns(other._n_columns), _n_rows(other._n_rows) {
 
@@ -240,9 +236,9 @@ public:
     /**
      * @brief Operatore di assegnamento
      *
-     * Operatore di assegnamento che crea una copia di other in this e ripulisce le celle vecchie di this.
+     * Crea una copia di other in this e ripulisce le vecchie celle di this.
      *
-     * @param other
+     * @param other sparse matrix di cui fare la copia
      * @return reference a sparse_matrix
      */
     sparse_matrix& operator=(const sparse_matrix &other){
@@ -270,7 +266,7 @@ public:
     /**
      * @brief Ritorna la quantità di dati salvati
      *
-     * Metodo per ottenere il numero di dati che effettivamente sono stati memorizzati sullo heap
+     * Ritorna il numero di dati che effettivamente sono stati memorizzati sullo heap
      *
      * @return quantità dei dati effettivamente salvati nella matrice
      */
@@ -279,7 +275,7 @@ public:
     /**
      * @brief Ritorna il valore impostato come valore di default
      *
-     * Metodo per ottenere il dato impostato come dato di default
+     * Ritorna il dato impostato come dato di default
      *
      * @return valore impostato come valore di default
      */
@@ -288,7 +284,7 @@ public:
     /**
      * @brief Ritorna il numero delle colonne con cui è stata inizializzata la matrice
      *
-     * Metodo per conoscere il numero di colonne massime della matrice
+     * Ritorna il numero di colonne massime della matrice
      *
      * @return numero di colonne della matrice
      */
@@ -297,7 +293,7 @@ public:
     /**
      * @brief Ritorna il numero delle righe con cui è stata iniziliazzata la matrice
      *
-     * Metodo per conoscere il numero di righe massime della matrice
+     * Ritorna il numero di righe massime della matrice
      *
      * @return
      */
@@ -306,8 +302,7 @@ public:
     /**
      * @brief Metodo per settare il valore di una cella
      *
-     * Il metodo imposta il valore della cella in posizione (x, y) con il valore passato come parametro.
-     *
+     * Imposta il valore della cella in posizione (x, y) con il valore passato come parametro.
      *
      * @param x posizione sulle righe della matrice
      * @param y posizione sulle colonne della matrice
@@ -345,15 +340,6 @@ public:
         _size++;
     }
 
-    /*
-    void print_test(){
-        nodo* current(_head);
-
-        while (current != nullptr){
-            current = current->next;
-        }
-    }*/
-
     /**
      * @brief Operator() per ottenere l'elemento in posizione (x, y)
      *
@@ -361,7 +347,7 @@ public:
      *
      * @param x Posizione sulle righe della matrice
      * @param y Posizione sulle colonne della matrice
-     * @return valore memorizzato nella cella matrice
+     * @return valore memorizzato nella cella della matrice
      */
     const value_t& operator()(position_t x, position_t y) const {
         nodo* current(_head);
@@ -375,80 +361,12 @@ public:
         return _default_value;
     }
 
-    class const_iterator {
-        //sono chiamati trades dell'iteratore e sono info utili per l'iteratore:
-        // - che tipo di iteratore è
-        // - che tipo di dati contiene
-        // - ptrdiff_t tipo di dato della differenza tra 2 puntatori
-        // gli altri 2 sono puntatori e reference e qui sono settati const, mentre in iterator no.
-    public:
-        typedef std::forward_iterator_tag iterator_category;
-        typedef element                      value_type;
-        typedef ptrdiff_t                 difference_type;
-        typedef const element*               pointer;
-        typedef const element&               reference;
-
-
-        const_iterator(): ptr(nullptr) {}
-
-        const_iterator(const const_iterator &other): ptr(other.ptr) {}
-
-        const_iterator& operator=(const const_iterator &other) {
-            const_iterator tmp(other);
-            std::swap(this->ptr, tmp.ptr);
-            return *this;
-        }
-
-        //Il distruttore sarà quasi sempre vuoto perchè gli iteratori non possiedono i dati
-        ~const_iterator() {}
-
-        // Ritorna il dato riferito dall'iteratore (dereferenziamento)
-        reference operator*() const {
-            return ptr->el;
-        }
-
-        // Ritorna il puntatore al dato riferito dall'iteratore
-        pointer operator->() const {
-            return &ptr->el;
-        }
-
-        const_iterator operator++(int) {
-            const_iterator tmp(*this);
-            ptr = ptr->next;
-            return tmp;
-        }
-
-        const_iterator& operator++() {
-            ptr = ptr->next;
-            return *this;
-        }
-
-        bool operator==(const const_iterator &other) const {
-            return ptr == other.ptr;
-        }
-
-        bool operator!=(const const_iterator &other) const {
-            return !(ptr == other.ptr);
-        }
-
-    private:
-        const nodo* ptr;
-
-        friend class sparse_matrix;
-
-        const_iterator(const nodo* p): ptr(p) {}
-
-    };
-
-    const_iterator begin() const {
-        return const_iterator(_head);
-    }
-
-    const_iterator end() const {
-        return const_iterator(nullptr);
-    }
-
-private:
+    /**
+     * @brief Funzione clear per pulire la memoria
+     *
+     * Rimuove tutti gli elementi presenti nella matrice dallo heap
+     *
+     */
     void clear(){
         nodo* current(_head);
 
@@ -464,7 +382,158 @@ private:
         _size = 0;
     }
 
+    /**
+     * @brief classe const_iterator
+     *
+     * Genera un const iterator per la sparse matrix seguendo la struttura standard degli iteratori costanti
+     *
+     */
+    class const_iterator {
 
+    public:
+        /** tipo per identificare la tipologia di iteratore (forward) */
+        typedef std::forward_iterator_tag iterator_category;
+        /** tipo del valore ritornato dall'iteratore */
+        typedef element                   value_type;
+        /** tipo per la differenza tra 2 puntatori*/
+        typedef ptrdiff_t                 difference_type;
+        /** puntatore al tipo di dato puntato dall'iteratore*/
+        typedef const element*            pointer;
+        /** reference al tipo di dato ritoranto dall'iteratore*/
+        typedef const element&            reference;
+
+        /**
+         * @brief Costruttore di default
+         *
+         * Inizializza il puntatore dell'iteratore a nullptr
+         */
+        const_iterator(): ptr(nullptr) {}
+
+        /**
+         * @brief Costruttore di copia
+         *
+         * Crea un iteratore eseguendo la copia di un altro iteratore
+         *
+         * @param other iteratore da cui copiare il puntatore
+         */
+        const_iterator(const const_iterator &other): ptr(other.ptr) {}
+
+        /**
+         * @brief Operatore di assegnamento
+         *
+         * Esegue una copia del puntatore, la memorizza nell'oggetto prefisso e ritorna l'elemento
+         *
+         * @param other iteratore di cui eseguire la copia
+         * @return
+         */
+        const_iterator& operator=(const const_iterator &other) {
+            const_iterator tmp(other);
+            std::swap(this->ptr, tmp.ptr);
+            return *this;
+        }
+
+        /**
+         * @brief Distruttore
+         *
+         * Non viene eliminato nessun dato
+         *
+         */
+        ~const_iterator() {}
+
+        /**
+         * @brief Operatore di deferenziamento
+         *
+         * Ritorna il dato puntato dall'iteratore
+         *
+         * @return reference all'elemento element
+         */
+        reference operator*() const {
+            return ptr->el;
+        }
+
+        /**
+         * @brief Operatore di accesso al dato
+         *
+         * Ritorna il puntatore al dato puntato dall'iteratore
+         *
+         * @return
+         */
+        pointer operator->() const {
+            return &ptr->el;
+        }
+
+        /**
+         * @brief Operatore di incremento postfisso
+         *
+         * Ritorna il dato puntato dall'iteratore e successivamente sposta il puntatore all'elemento successivo
+         *
+         * @return l'iteratore prima dell'incremento
+         */
+        const_iterator operator++(int) {
+            const_iterator tmp(*this);
+            ptr = ptr->next;
+            return tmp;
+        }
+
+        /**
+         * @brief Operatore di incremento prefisso
+         *
+         * Sposta l'iteratore all'elemento successivo e ritorna il nuovo elemento puntato
+         *
+         * @return l'iteratore dopo l'incremento
+         */
+        const_iterator& operator++() {
+            ptr = ptr->next;
+            return *this;
+        }
+
+        /**
+         * @brief Operatore di uguaglianza
+         *
+         * Confronta due iteratori tra di loro, ritorna true se puntano allo stesso nodo
+         *
+         * @param other iteratore di confronto
+         * @return true sse i puntatori degli iteratori stanno puntando allo stesso nodo
+         */
+        bool operator==(const const_iterator &other) const {
+            return ptr == other.ptr;
+        }
+
+        /**
+         * @brief Operatore di diversità
+         *
+         * Confronta due iteratori tra di loro, ritorna true se sono diversi
+         *
+         * @param other iteratore di confronto
+         * @return true sse i puntatori degli iteratori stanno puntando a nodi diversi
+         */
+        bool operator!=(const const_iterator &other) const {
+            return !(ptr == other.ptr);
+        }
+
+    private:
+        const nodo* ptr; //!< nodo puntato dall'iteratore
+
+        friend class sparse_matrix;
+
+        /**
+         * @brief Costrutture privato dell'itetore
+         *
+         * Costruttore usato dalla classe friend per costruire l'iteratore a partire dal puntatore al nodo
+         *
+         * @param p puntatore al nodo con cui viene inizializzato l'iteratore
+         */
+        const_iterator(const nodo* p): ptr(p) {}
+
+    };
+
+    const_iterator begin() const {
+        return const_iterator(_head);
+    }
+
+    const_iterator end() const {
+        return const_iterator(nullptr);
+    }
 
 };
 
