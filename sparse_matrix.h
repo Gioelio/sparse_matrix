@@ -7,6 +7,14 @@
 #include <cstddef> // std::ptrdiff_t
 #include "myexception.h"
 
+/**
+ * @brief Classe che gestisce una sparse matrix
+ *
+ * La sparse matrix si occupa di mantenere in memoria solamente le celle di dati effettivamente inserite dall'utente,
+ * se la cella non è presente viene ritornato il valore di default dello stesso tipo di T
+ *
+ * @tparam T tipo del dato che viene memorizzato nelle cella della matrice o viene ritornato come tipo di default
+ */
 template<typename T>
 class sparse_matrix {
 
@@ -15,38 +23,129 @@ public:
     typedef int size_t;
     typedef int position_t;
 
+    /**
+     * @brief Stuttura che contiene la posizione x e y dell'elemento nella matrice e il suo valore in value
+     *
+     * L'element viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
+     * relative al posizionamento dell'elemento all'interno della matrice
+     */
     struct element {
         position_t x;
         position_t y;
         value_t value;
 
-        element() {}
+        /**
+         * @brief Costruttore di default di element
+         *
+         * Il costruttore di default di element richiama i costruttori di default dei suoi attributi membro
+         */
+        element(): x(), y(), value() {}
+
+        /**
+         * @brief Costruttore secondario
+         *
+         * Prende come parametro i valori dei dati membro e li assegna
+         *
+         * @param x posizione sulle righe della matrice
+         * @param y posizione sulle colonne della matrice
+         * @param value valore del dato memorizzato
+         */
         element(position_t x, position_t y, const value_t &value): x(x), y(y), value(value){}
+
+        /**
+         * @brief Costruttore di copia
+         *
+         * Inizializza un nuovo oggetto sparse matrix copiando il contenuto di un'altro oggetto
+         *
+         * @param other oggetto di cui viene fatta la copia
+         */
         element(const element &other): x(other.x), y(other.y), value(other.value) {}
 
+        /**
+         * @bief operatore di assegnamento
+         *
+         * Operatore che crea una copia del valore di element in una variabile dello stesso tipo
+         *
+         * @param other parametro dell'elemento da copiare
+         * @return viene ritornata l'istanza di this (parametro prefisso dell'operatore = )
+         */
         element& operator=(const element &other) {
             element tmp(other);
             std::swap(tmp.x, this->x);
             std::swap(tmp.y, this->y);
-            this->value = other.value;
+            value = other.value;
 
             return *this;
         }
 
+        /**
+         * @brief Distruttore
+         *
+         * Elimina il contenuto della classe, ma dato che non contiene puntatori, alla sua uscita di scope vengono
+         * deallocati i dati in automatico
+         */
         ~element() {}
     };
 
 private:
 
+
+    /**
+     * @brief struttura interna della sparse matrix per la gestione delle celle
+     *
+     * La struttua del nodo contiene un elemento, che corrisponde al dato effettivo e al puntatore al nodo successivo
+     *
+     */
     struct nodo {
         element el;
         nodo* next;
 
-        nodo(): next(nullptr), el(nullptr) {}
-        explicit nodo(const element e): el(e), next(nullptr) {}
+        /**
+         * @brief Costruttore di default di nodo
+         *
+         * Costruttore che inizializza il nodo con i valori di default, next a nullptr e chiama il costruttore di default
+         * di element
+         */
+        nodo(): next(nullptr), el() {}
+
+        /**
+         * @brief Costruttore secondario
+         *
+         * Genera un nodo a partire da un elemento
+         *
+         * @param el elemento su cui effettua la copia
+         */
+        explicit nodo(const element &el): el(el), next(nullptr) {}
+
+        /**
+         * @brief Costruttore di copia
+         *
+         * Genera una copia del nodo a partire da un elemento other, non fa la copia del puntatore next
+         *
+         * @param other elemento di cui viene effettuata la copia
+         */
         nodo(const nodo &other): el(other.el), next(nullptr) {}
+
+        /**
+         * @brief Costruttore secondario che prende tutti i parametri
+         *
+         * Costruttore secondario che inizializza il nodo passando tutti i parametri nel costruttore
+         *
+         * @param x posizione sulle colonne della matrice
+         * @param y posizione sulle righe della matrice
+         * @param value valore contenuto nella cella della matrice
+         */
         nodo(position_t x, position_t y, const value_t &value): next(nullptr), el(x, y, value) {}
 
+        /**
+         * @brief operatore di assegnamento
+         *
+         * Operatore che crea una copia del nodo e la assegna all'istanza di this (parametro prefisso di operator =).
+         * Elimina in automatico il puntatore memorizzato all'interno di this
+         *
+         * @param other nodo di cui viene effettuata la copia
+         * @return ritorna la nuova copia dell'elemento
+         */
         nodo& operator=(const nodo &other) {
             nodo tmp(other);
             std::swap(this->el, tmp.el);
@@ -55,6 +154,13 @@ private:
             return *this;
         }
 
+        /**
+         * @brief Distruttore
+         *
+         * l'elemento viene eliminato in automatico in quanto attributo di nodo, e il next viene impostato a nullptr,
+         * l'eliminazione è a cura di sparse matrix
+         *
+         */
         ~nodo() { next = nullptr; }
     };
 
@@ -134,7 +240,7 @@ public:
     /**
      * @brief Operatore di assegnamento
      *
-     * Operatore di assegnamento che serve per copiare il contenuto di other in *this.
+     * Operatore di assegnamento che crea una copia di other in this e ripulisce le celle vecchie di this.
      *
      * @param other
      * @return reference a sparse_matrix
@@ -239,15 +345,24 @@ public:
         _size++;
     }
 
+    /*
     void print_test(){
         nodo* current(_head);
 
         while (current != nullptr){
             current = current->next;
         }
-    }
+    }*/
 
-
+    /**
+     * @brief Operator() per ottenere l'elemento in posizione (x, y)
+     *
+     * Ritorna l'elemento della matrice memorizzato all'interno la cella (x, y)
+     *
+     * @param x Posizione sulle righe della matrice
+     * @param y Posizione sulle colonne della matrice
+     * @return valore memorizzato nella cella matrice
+     */
     const value_t& operator()(position_t x, position_t y) const {
         nodo* current(_head);
 
