@@ -1,6 +1,7 @@
-#include "sparse_matrix.h"
+#include "sparse_matrix.h" //sparse_matrix
 #include <assert.h> //assert
 #include <iostream> //cout
+#include "test_class.h" //test_class
 
 struct predicate{
     bool operator() (int value){
@@ -8,6 +9,23 @@ struct predicate{
     }
 };
 
+struct predicate_test_class {
+    bool operator() (test_class test) {
+        return test.get_value() > 5 && test.get_value_ptr() < 5;
+    }
+};
+
+/**
+ * @brief Funzione di valutazione
+ *
+ * Esegue il predicato F per ogni elemento T contenuto all'interno della matrice
+ *
+ * @tparam T tipo di dato contenuto all'interno della matrice mat
+ * @tparam F tipo di dato del predicato che esegue il confronto
+ * @param mat matrice su cui eseguire il confronto
+ * @param pred predicato che effettivamente esegue il controllo sull'elemento
+ * @return numero di elementi della matrice che soddisfano il predicato
+ */
 template<typename T, typename F>
 int evaluate (const sparse_matrix<T> &mat, F pred) {
     unsigned int cont = 0;
@@ -22,24 +40,6 @@ int evaluate (const sparse_matrix<T> &mat, F pred) {
     return cont;
 }
 
-class test_class {
-        public:
-            test_class(): value() {}
-            test_class(const int &value): value(value) {}
-            test_class(const test_class &other): value(other.value) {}
-            test_class& operator= (const test_class &other){
-                test_class tmp(other);
-                std::swap(tmp.value, this->value);
-                return *this;
-            }
-
-            ~test_class() {}
-
-            bool operator==(const test_class &other) const { return other.value == value; }
-
-        private:
-            int value;
-        };
 
 void test_fondamentali(){
 
@@ -64,9 +64,11 @@ void test_fondamentali(){
     assert(sec.size() + 1 == copy.size()); //test per fare in modo che i 2 oggetti siano scollegati
 
     std::cout << "test assegnamento" << std::endl;
+    copy.set(1, 1, 30);
     def = copy;
     assert(def.size() == copy.size());
     assert(def.default_value() == copy.default_value());
+    assert(&def(1, 1) != &copy(1, 1)); //controllo che le aree di memoria siano diverse
 }
 
 void test_sparse_matrix() {
@@ -170,14 +172,15 @@ void test_sparse_matrix_iterator() {
 void test_custom_class(){
     std::cout << "--- TEST custom class ---" << std::endl;
 
+    test_class a(100);
+    test_class b(a);
+
     std::cout << "test ctor default value" << std::endl;
-    sparse_matrix<test_class> mat(test_class(10), 20, 100);
+    sparse_matrix<test_class> mat(a, 20, 100);
 
     std::cout << "test set value" << std::endl;
     mat.set(18, 10, test_class(100));
     mat.set(19, 25, test_class(10));
-
-    mat.print_test();
 
     std::cout << "test size value" << std::endl;
     assert(mat.size() == 2);
@@ -199,11 +202,22 @@ void test_evaluate(){
     //valori minori di 5
     predicate p;
 
-    std::cout << "test value returned from evaluate" << evaluate(mat, p) <<  std::endl;
+    std::cout << "test value returned from evaluate" << std::endl;
     assert(evaluate(mat, p) == 3);
 
     mat.set(1, 1, 10);
     assert(evaluate(mat, p) == 2);
+
+    std::cout << "test evaluate on custom class" << std::endl;
+
+    sparse_matrix<test_class> a(test_class(10, 20), 10, 10);
+    sparse_matrix<test_class> b(test_class(6 , 4), 10, 2);
+
+    a.set(1,1, test_class(10, 2));
+    predicate_test_class pred;
+
+    assert(evaluate(a, pred) == 1);
+    assert(evaluate(b, pred) == 20);
 
 }
 
