@@ -22,7 +22,7 @@ void find_dialog::on_find_btn_clicked(){
     emit find_btn_clicked(ui->match_str_line_edit->text(), this->match_case);
 }
 
-void find_dialog::on_str_found(bool is_found) {
+void find_dialog::str_found(bool is_found) {
     if(is_found)
         ui->err_label->show();
     else

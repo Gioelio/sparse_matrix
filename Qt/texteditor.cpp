@@ -6,6 +6,7 @@
 #include <QTextCharFormat>
 #include <string>
 
+
 TextEditor::TextEditor(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::TextEditor), file(nullptr)
 {
@@ -39,7 +40,6 @@ void TextEditor::on_btn_new_clicked()
     update();
 }
 
-
 void TextEditor::on_btn_open_clicked()
 {
     QString file_content;
@@ -65,8 +65,6 @@ void TextEditor::on_btn_open_clicked()
     update();
 }
 
-
-
 void TextEditor::on_btn_save_clicked()
 {
     if(file == nullptr)
@@ -83,12 +81,12 @@ void TextEditor::on_btn_save_clicked()
     update();
 }
 
+
 void TextEditor::update(){
     bool there_is_file = file == nullptr;
 
     ui->btn_save->setDisabled(there_is_file);
 }
-
 
 void TextEditor::on_btn_save_with_name_clicked()
 {
@@ -102,53 +100,57 @@ void TextEditor::on_btn_save_with_name_clicked()
     update();
 }
 
-
 void TextEditor::on_btn_find_clicked()
 {
     find_dialog find;
 
     connect(&find, &find_dialog::find_btn_clicked, this, &TextEditor::search_text);
-    connect(this, &TextEditor::str_found, &find, &find_dialog::on_str_found);
+    connect(this, &TextEditor::str_found, &find, &find_dialog::str_found);
 
     find.setModal(true);
     find.exec();
 
 }
 
-void TextEditor::search_text(QString match_str, bool match_case)
+void TextEditor::search_text(const QString &match_str, bool match_case)
 {
-    std::string text;
 
-    if(!match_case){
-        match_str = match_str.toLower();
-        text = ui->text_editor->toPlainText().toLower().toStdString();
-    }
-    else
-        text = ui->text_editor->toPlainText().toStdString();
+    QTextDocument *document = ui->text_editor->document();
 
-    QTextCursor cursor(ui->text_editor->document());
-    std::size_t found = text.find(match_str.toStdString());
+
+    QTextCursor highlight_cursor(document);
+    QTextCursor cursor(document);
+    bool found(false);
 
     QTextCharFormat format = QTextCharFormat();
     format.setBackground(Qt::transparent);
 
     cursor.setPosition(0, QTextCursor::MoveAnchor);
-    cursor.setPosition(text.length(), QTextCursor::KeepAnchor);
+    cursor.setPosition(ui->text_editor->toPlainText().length(), QTextCursor::KeepAnchor);
+    cursor.setCharFormat(format);
+    cursor.setPosition(0, QTextCursor::MoveAnchor);
+
+
+    format.setForeground(Qt::yellow);
+
+    cursor.beginEditBlock();
     cursor.setCharFormat(format);
 
-    format.setBackground(Qt::yellow);
+    while(!highlight_cursor.isNull() && !highlight_cursor.atEnd()){
+        if(match_case)
+            highlight_cursor = document->find(match_str, highlight_cursor, QTextDocument::FindWholeWords);
+        else
+            highlight_cursor = document->find(match_str, highlight_cursor);
 
-    if(found == std::string::npos)
-        emit str_found(true);
-    else
-        emit str_found(false);
-
-    while(found != std::string::npos){
-        cursor.setPosition(found, QTextCursor::MoveAnchor);
-        cursor.setPosition(found + match_str.length(), QTextCursor::KeepAnchor);
-        cursor.setCharFormat(format);
-
-        found = text.find(match_str.toStdString(), found + 1);
+        if(!highlight_cursor.isNull()) {
+            found = true;
+            highlight_cursor.movePosition(QTextCursor::WordRight, QTextCursor::KeepAnchor);
+            highlight_cursor.mergeCharFormat(format);
+        }
     }
+
+    cursor.endEditBlock();
+
+    emit str_found(!found);
 
 }
