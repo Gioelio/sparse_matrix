@@ -106,7 +106,7 @@ private:
      *
      * @param file_name: nome del file a cui punta il textEditor
      */
-    void set_file(QString file_name);
+    void set_file(QString &file_name);
 
     /**
      * @brief TextEditor::unset_file

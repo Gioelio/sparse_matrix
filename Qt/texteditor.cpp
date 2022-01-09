@@ -27,7 +27,7 @@ void TextEditor::unset_file(){
     this->file = nullptr;
 }
 
-void TextEditor::set_file(QString file_name)
+void TextEditor::set_file(QString &file_name)
 {
     this->unset_file();
     this->file = new QFile(file_name);
