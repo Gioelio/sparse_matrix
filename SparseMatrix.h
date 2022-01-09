@@ -95,7 +95,7 @@ private:
      * @struct nodo
      * @brief struttura interna della sparse matrix per la gestione delle celle
      *
-     * La struttua del nodo contiene un elemento, che corrisponde al dato effettivo e al puntatore al nodo successivo
+     * La struttura del nodo contiene un elemento, che corrisponde al dato effettivo e al puntatore al nodo successivo
      *
      */
     struct nodo {
@@ -286,16 +286,16 @@ public:
      *
      * Ritorna il numero di colonne massime della matrice
      *
-     * @return numero di colonne della matrice
+     * @return numero di colonne massime della matrice
      */
     position_t columns() const { return _n_columns; }
 
     /**
-     * @brief Ritorna il numero delle righe con cui è stata iniziliazzata la matrice
+     * @brief Ritorna il numero delle righe con cui è stata inizializzata la matrice
      *
      * Ritorna il numero di righe massime della matrice
      *
-     * @return
+     * @return numero di righe massime della matrice
      */
     position_t rows() const { return _n_rows;}
 
@@ -399,7 +399,7 @@ public:
         typedef ptrdiff_t                 difference_type;
         /** puntatore al tipo di dato puntato dall'iteratore*/
         typedef const element*            pointer;
-        /** reference al tipo di dato ritoranto dall'iteratore*/
+        /** reference al tipo di dato ritornato dall'iteratore*/
         typedef const element&            reference;
 
         /**
@@ -517,7 +517,7 @@ public:
         friend class SparseMatrix;
 
         /**
-         * @brief Costrutture privato dell'itetore
+         * @brief Costrutture privato dell'iteratore
          *
          * Costruttore usato dalla classe friend per costruire l'iteratore a partire dal puntatore al nodo
          *
