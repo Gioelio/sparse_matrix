@@ -3,7 +3,7 @@ all: a.out
 a.out : main.o myexception.o test_class.o
 	g++ -o a.out test_class.o main.o myexception.o -std=c++0x
 
-main.o: main.cpp sparse_matrix.h
+main.o: main.cpp SparseMatrix.h
 	g++ -o main.o -c main.cpp -std=c++0x
 
 myexception.o: myexception.cpp myexception.h

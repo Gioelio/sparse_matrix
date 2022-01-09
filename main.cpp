@@ -1,4 +1,4 @@
-#include "sparse_matrix.h" //sparse_matrix
+#include "SparseMatrix.h" //SparseMatrix
 #include <assert.h> //assert
 #include <iostream> //cout
 #include "test_class.h" //test_class
@@ -27,9 +27,9 @@ struct predicate_test_class {
  * @return numero di elementi della matrice che soddisfano il predicato
  */
 template<typename T, typename F>
-int evaluate (const sparse_matrix<T> &mat, F pred) {
+int evaluate (const SparseMatrix<T> &mat, F pred) {
     unsigned int cont = 0;
-    for(typename sparse_matrix<T>::const_iterator iter = mat.begin(); iter != mat.end(); ++iter) {
+    for(typename SparseMatrix<T>::const_iterator iter = mat.begin(); iter != mat.end(); ++iter) {
         if (pred(iter->value))
             cont++;
     }
@@ -46,18 +46,18 @@ void test_fondamentali(){
     std::cout << "--- TEST FONDAMENTALI ---" << std::endl;
 
     std::cout << "test ctor default" << std::endl;
-    sparse_matrix<int> def;
+    SparseMatrix<int> def;
     assert(def.size() == 0);
 
     std::cout << "test ctor secondario" << std::endl;
-    sparse_matrix<int> sec(10, 100, 100);
+    SparseMatrix<int> sec(10, 100, 100);
     assert(sec.size() == 0);
     int valore = sec.default_value();
     valore++;
     assert(sec.default_value() == 10);    //test modifica valore ritornato per reference
 
     std::cout << "test copy ctor" << std::endl;
-    sparse_matrix<int> copy(sec);
+    SparseMatrix<int> copy(sec);
     assert(sec.size() == copy.size());
     assert(sec.default_value() == copy.default_value());
     copy.set(0,0, 10);
@@ -73,10 +73,10 @@ void test_fondamentali(){
 
 void test_sparse_matrix() {
 
-    std::cout << "--- TEST METODI sparse_matrix ---" << std::endl;
+    std::cout << "--- TEST METODI SparseMatrix ---" << std::endl;
 
     std::cout << "test set value" << std::endl;
-    sparse_matrix<int> set(-1, 100, 100);
+    SparseMatrix<int> set(-1, 100, 100);
     assert(set.size() == 0);
     set.set(1, 1, 30);
     assert(set.size() == 1);
@@ -90,7 +90,7 @@ void test_sparse_matrix() {
     assert(set(2, 10) == 50);
     assert(set(2, 4) == -1); //valore di default
 
-    sparse_matrix<int> dim(-5, 4, 6);
+    SparseMatrix<int> dim(-5, 4, 6);
 
     std::cout << "test column number" << std::endl;
     assert(set.columns() == 100);
@@ -102,7 +102,7 @@ void test_sparse_matrix() {
 
 }
 
-void test_const_sparse_matrix(const sparse_matrix<int> const_mat) {
+void test_const_sparse_matrix(const SparseMatrix<int> const_mat) {
 
     //i metodi di scrittura dovrebbero dare errore
     //const_mat.set(1, 2, 10);
@@ -118,7 +118,7 @@ void test_const_sparse_matrix(const sparse_matrix<int> const_mat) {
 }
 
 void test_const(){
-    sparse_matrix<int> const_mat(-1, 100, 10);
+    SparseMatrix<int> const_mat(-1, 100, 10);
 
     const_mat.set(1,1, 10);
 
@@ -128,7 +128,7 @@ void test_const(){
 void test_sparse_matrix_iterator() {
     std::cout << "--- TEST sparse matrix iterator ---" << std::endl;
 
-    sparse_matrix<int> mat_iter(10, 20, 20);
+    SparseMatrix<int> mat_iter(10, 20, 20);
 
     std::cout << "test add values" << std::endl;
 
@@ -139,7 +139,7 @@ void test_sparse_matrix_iterator() {
 
     std::cout << "test get iterator begin" << std::endl;
 
-    sparse_matrix<int>::const_iterator iter = mat_iter.begin();
+    SparseMatrix<int>::const_iterator iter = mat_iter.begin();
 
     std::cout << "test getting value from iterator" << std::endl;
 
@@ -149,14 +149,14 @@ void test_sparse_matrix_iterator() {
 
     std::cout << "test post increment" << std::endl;
 
-    sparse_matrix<int>::const_iterator iter_2 = iter++;
+    SparseMatrix<int>::const_iterator iter_2 = iter++;
 
     assert(iter_2->value == 20);
     assert(iter->value == 30);
 
     std::cout << "test pre increment" << std::endl;
 
-    sparse_matrix<int>::const_iterator iter_pre = ++iter;
+    SparseMatrix<int>::const_iterator iter_pre = ++iter;
     assert(iter->value == iter_pre->value);
     assert(iter->value == 50);
 
@@ -164,7 +164,7 @@ void test_sparse_matrix_iterator() {
     assert(iter == iter_pre);
 
     std::cout << "test deferencing" << std::endl;
-    sparse_matrix<int>::element a = *iter;
+    SparseMatrix<int>::element a = *iter;
     assert(a.value == 50);
 
 }
@@ -176,7 +176,7 @@ void test_custom_class(){
     test_class b(a);
 
     std::cout << "test ctor default value" << std::endl;
-    sparse_matrix<test_class> mat(a, 20, 100);
+    SparseMatrix<test_class> mat(a, 20, 100);
 
     std::cout << "test set value" << std::endl;
     mat.set(18, 10, test_class(100));
@@ -192,7 +192,7 @@ void test_custom_class(){
 
 void test_evaluate(){
     std::cout << "--- TEST evaluate predicate ---" << std::endl;
-    sparse_matrix<int> mat(-1, 2, 2);
+    SparseMatrix<int> mat(-1, 2, 2);
 
     //mat.set(1,1, -1);
     mat.set(1, 0, 6);
@@ -210,8 +210,8 @@ void test_evaluate(){
 
     std::cout << "test evaluate on custom class" << std::endl;
 
-    sparse_matrix<test_class> a(test_class(10, 20), 10, 10);
-    sparse_matrix<test_class> b(test_class(6 , 4), 10, 2);
+    SparseMatrix<test_class> a(test_class(10, 20), 10, 10);
+    SparseMatrix<test_class> b(test_class(6 , 4), 10, 2);
 
     a.set(1,1, test_class(10, 2));
     predicate_test_class pred;

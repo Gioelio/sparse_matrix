@@ -1,5 +1,5 @@
-#ifndef SPARSE_MATRIX_SPARSE_MATRIX_H
-#define SPARSE_MATRIX_SPARSE_MATRIX_H
+#ifndef SPARSE_MATRIX_SPARSEMATRIX_H
+#define SPARSE_MATRIX_SPARSEMATRIX_H
 
 #include <iostream> //cout
 #include <assert.h> //assert
@@ -16,7 +16,7 @@
  * @tparam T tipo del dato che viene memorizzato nelle cella della matrice o viene ritornato come tipo di default
  */
 template<typename T>
-class sparse_matrix {
+class SparseMatrix {
 
 public:
     /** tipo associato al tipo T templato */
@@ -30,7 +30,7 @@ public:
      * @struct element
      * @brief Memorizza la posizione x e y dell'elemento nella matrice e il suo valore in value
      *
-     * L'elmeento viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
+     * L'elemento viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
      * relative al suo posizionamento all'interno della matrice
      */
     struct element {
@@ -174,7 +174,7 @@ public:
      *
      * La dimensione di default della matrice è 0x0
      */
-    sparse_matrix(): _head(nullptr), _size(0), _n_columns(0), _n_rows(0), _default_value() {}
+    SparseMatrix(): _head(nullptr), _size(0), _n_columns(0), _n_rows(0), _default_value() {}
 
     /**
      * @brief Costruttore con valore di default passato come argomento
@@ -184,7 +184,7 @@ public:
      *
      * @param default_value
      */
-    explicit sparse_matrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0), _n_columns(0), _n_rows(0) {}
+    explicit SparseMatrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0), _n_columns(0), _n_rows(0) {}
 
     /**
      * @brief Costruttore per settare la dimensione e il valore di default della matrice
@@ -195,7 +195,7 @@ public:
      * @param n_rows numero di righe della matrice
      * @param n_cols numero di colonne della matrice
      */
-    sparse_matrix(const value_t &default_value, const position_t n_rows, const position_t n_cols):
+    SparseMatrix(const value_t &default_value, const position_t n_rows, const position_t n_cols):
         _default_value(default_value),
         _head(nullptr),
         _size(0),
@@ -210,7 +210,7 @@ public:
      *
      * @param other sparse matrix di cui fare la copia
      */
-    sparse_matrix(const sparse_matrix &other): _head(nullptr), _size(other._size), _default_value(other._default_value), _n_columns(other._n_columns), _n_rows(other._n_rows) {
+    SparseMatrix(const SparseMatrix &other): _head(nullptr), _size(other._size), _default_value(other._default_value), _n_columns(other._n_columns), _n_rows(other._n_rows) {
 
         nodo* iter_other = other._head;
 
@@ -239,11 +239,11 @@ public:
      * Crea una copia di other in this e ripulisce le vecchie celle di this.
      *
      * @param other sparse matrix di cui fare la copia
-     * @return reference a sparse_matrix
+     * @return reference a SparseMatrix
      */
-    sparse_matrix& operator=(const sparse_matrix &other){
+    SparseMatrix& operator=(const SparseMatrix &other){
         if(this != &other){
-            sparse_matrix tmp(other);
+            SparseMatrix tmp(other);
             std::swap(this->_head, tmp._head);
             std::swap(this->_size, tmp._size);
             std::swap(this->_default_value, tmp._default_value);
@@ -259,7 +259,7 @@ public:
      * Elimina il contenuto delle celle memorizzate nella matrice
      *
      */
-    ~sparse_matrix() {
+    ~SparseMatrix() {
         clear();
     }
 
@@ -537,4 +537,4 @@ public:
 
 };
 
-#endif //SPARSE_MATRIX_SPARSE_MATRIX_H
+#endif //SPARSE_MATRIX_SPARSEMATRIX_H
