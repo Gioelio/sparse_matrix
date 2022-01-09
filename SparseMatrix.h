@@ -514,7 +514,7 @@ public:
     private:
         const nodo* ptr; //!< nodo puntato dall'iteratore
 
-        friend class sparse_matrix;
+        friend class SparseMatrix;
 
         /**
          * @brief Costrutture privato dell'itetore
