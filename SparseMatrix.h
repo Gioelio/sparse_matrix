@@ -527,10 +527,24 @@ public:
 
     };
 
+    /**
+     * @brief Ritorna un iteratore che punta alla testa della matrice
+     *
+     * Ritorna l'iteratore al "primo" elemento memorizzato realmente nella matrice
+     *
+     * @return iteratore al primo elemento della matrice
+     */
     const_iterator begin() const {
         return const_iterator(_head);
     }
 
+    /**
+     * @brief Ritorna un iteratore all'ultimo elemento della matrice
+     *
+     * L'iteratore ritornato fa fine ad un iteratore che identifica la fine della matrice
+     *
+     * @return iteratore all'ultimo elemento della matrice
+     */
     const_iterator end() const {
         return const_iterator(nullptr);
     }
