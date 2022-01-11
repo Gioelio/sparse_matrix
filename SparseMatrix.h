@@ -345,8 +345,13 @@ public:
      * @param x Posizione sulle righe della matrice
      * @param y Posizione sulle colonne della matrice
      * @return valore memorizzato nella cella della matrice
+     * @throw my_out_of_range se i valori di x e y sforano gli indici della matrice logica
      */
     const value_t& operator()(position_t x, position_t y) const {
+
+        if(x >= _n_rows ||  y >= _n_columns)
+            throw my_out_of_range("Il valore degli indici supera il range impostato");
+
         nodo* current(_head);
 
         while (current != nullptr){
