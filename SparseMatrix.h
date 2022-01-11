@@ -13,7 +13,7 @@
  * Mantiene in memoria solamente le celle di dati effettivamente inserite dall'utente,
  * se la cella non è presente viene ritornato il valore di default dello stesso tipo di T
  *
- * @tparam T tipo del dato che viene memorizzato nelle cella della matrice o viene ritornato come tipo di default
+ * @tparam T tipo del dato che viene memorizzato nelle cella della matrice
  */
 template<typename T>
 class SparseMatrix {
@@ -28,10 +28,9 @@ public:
 
     /**
      * @struct element
-     * @brief Memorizza la posizione x e y dell'elemento nella matrice e il suo valore in value
+     * @brief Memorizza la posizione e il valore dell'elemento all'interno della matrice
      *
-     * L'elemento viene ritornato dal deferenziamento di un iteratore e contiene oltre al valore effettivo, le informazioni
-     * relative al suo posizionamento all'interno della matrice
+     * L'elemento contiene il valore templato e la posizione nella matrice
      */
     struct element {
         position_t x; //!< posizione sulle righe della matrice
@@ -39,27 +38,27 @@ public:
         value_t value; //!< valore memorizzato dalla cella
 
         /**
-         * @brief Costruttore di default di element
+         * @brief Costruttore default di element
          *
-         * Il costruttore di default di element richiama i costruttori di default dei suoi attributi membro
+         * Inizializza i dati membro con i loro valori di default
          */
         element(): x(), y(), value() {}
 
         /**
          * @brief Costruttore secondario
          *
-         * Prende come parametro i valori dei dati membro e li assegna
+         * Prende come parametri i valori dei dati membro e li assegna
          *
          * @param x posizione sulle righe della matrice
          * @param y posizione sulle colonne della matrice
-         * @param value valore del dato memorizzato
+         * @param value valore del dato da memorizzare
          */
         element(position_t x, position_t y, const value_t &value): x(x), y(y), value(value){}
 
         /**
          * @brief Costruttore di copia
          *
-         * Inizializza un nuovo oggetto sparse matrix copiando il contenuto di un'altro oggetto
+         * Crea un nuovo oggetto sparse matrix copiando il contenuto di un'altro oggetto
          *
          * @param other oggetto di cui viene fatta la copia
          */
@@ -68,10 +67,10 @@ public:
         /**
          * @bief operatore di assegnamento
          *
-         * Crea una copia del valore di element in una variabile dello stesso tipo
+         * Crea una copia del valore di element e la assegna all'oggetto prefisso
          *
          * @param other parametro dell'elemento da copiare
-         * @return viene ritornata l'istanza di this (parametro prefisso dell'operatore = )
+         * @return istanza di this, dopo la copia di other (parametro prefisso dell'operatore = )
          */
         element& operator=(const element &other) {
             element tmp(other);
@@ -95,7 +94,7 @@ private:
      * @struct nodo
      * @brief struttura interna della sparse matrix per la gestione delle celle
      *
-     * La struttura del nodo contiene un elemento, che corrisponde al dato effettivo e al puntatore al nodo successivo
+     * Contiene un elemento, che corrisponde al dato effettivamente memorizzato e un puntatore al nodo successivo
      *
      */
     struct nodo {
@@ -105,8 +104,7 @@ private:
         /**
          * @brief Costruttore di default di nodo
          *
-         * Costruttore che inizializza il nodo con i valori di default, next a nullptr e chiama il costruttore di default
-         * di element
+         * Inizializza il nodo con i valori di default
          */
         nodo(): next(nullptr), el() {}
 
@@ -115,14 +113,14 @@ private:
          *
          * Genera un nodo a partire da un elemento
          *
-         * @param el elemento su cui effettua la copia
+         * @param el elemento di cui effettua la copia
          */
         explicit nodo(const element &el): el(el), next(nullptr) {}
 
         /**
          * @brief Costruttore di copia
          *
-         * Genera una copia del nodo a partire da un elemento other, non fa la copia del puntatore next
+         * Genera una copia del nodo a partire da un elemento other, non copia il puntatore a next
          *
          * @param other elemento di cui viene effettuata la copia
          */
@@ -135,7 +133,7 @@ private:
          *
          * @param x posizione sulle colonne della matrice
          * @param y posizione sulle righe della matrice
-         * @param value valore contenuto nella cella della matrice
+         * @param value valore da salvare nella cella della matrice
          */
         nodo(position_t x, position_t y, const value_t &value): next(nullptr), el(x, y, value) {}
 
@@ -143,7 +141,6 @@ private:
          * @brief operatore di assegnamento
          *
          * Crea una copia del nodo e la assegna all'istanza di this (parametro prefisso di operator =).
-         * Elimina in automatico il puntatore memorizzato all'interno di this
          *
          * @param other nodo di cui viene effettuata la copia
          * @return ritorna la nuova copia dell'elemento
@@ -163,7 +160,7 @@ private:
     };
 
     nodo* _head; //!< puntatore al primo elemento della lista
-    size_t _size; //!< numero di elementi effettivamente memorizzati all'interno della lista
+    size_t _size; //!< numero di elementi effettivamente memorizzati all'interno della matrice
     value_t _default_value; //!< valore che viene ritornato se la cella cercata non esiste in memoria
     position_t _n_columns; //!< numero di colonne della matrice logica
     position_t _n_rows; //!< numero di righe della matrice logica
@@ -177,7 +174,7 @@ public:
     SparseMatrix(): _head(nullptr), _size(0), _n_columns(0), _n_rows(0), _default_value() {}
 
     /**
-     * @brief Costruttore con valore di default passato come argomento
+     * @brief Costruttore secondario con valore di default passato come argomento
      *
      * Imposta il valore di default da ritornare quando non ci sono valori nella cella letta.
      * Imposta 0x0 come dimensione della matrice
@@ -187,7 +184,7 @@ public:
     explicit SparseMatrix(const value_t &default_value): _default_value(default_value), _head(nullptr), _size(0), _n_columns(0), _n_rows(0) {}
 
     /**
-     * @brief Costruttore per settare la dimensione e il valore di default della matrice
+     * @brief Costruttore secondario per settare la dimensione e il valore di default della matrice
      *
      * Imposta la dimensione della matrice e il suo valore di default
      *
@@ -266,7 +263,7 @@ public:
     /**
      * @brief Ritorna la quantità di dati salvati
      *
-     * Ritorna il numero di dati che effettivamente sono stati memorizzati sullo heap
+     * Ritorna il numero di dati che effettivamente sono stati memorizzati nella matrice
      *
      * @return quantità dei dati effettivamente salvati nella matrice
      */
@@ -300,7 +297,7 @@ public:
     position_t rows() const { return _n_rows;}
 
     /**
-     * @brief Metodo per settare il valore di una cella
+     * @brief Setta il valore di una cella della matrice
      *
      * Imposta il valore della cella in posizione (x, y) con il valore passato come parametro.
      *
@@ -364,7 +361,7 @@ public:
     /**
      * @brief Funzione clear per pulire la memoria
      *
-     * Rimuove tutti gli elementi presenti nella matrice dallo heap
+     * Rimuove tutti gli elementi presenti nella matrice
      *
      */
     void clear(){
@@ -399,13 +396,13 @@ public:
         typedef ptrdiff_t                 difference_type;
         /** puntatore al tipo di dato puntato dall'iteratore*/
         typedef const element*            pointer;
-        /** reference al tipo di dato ritornato dall'iteratore*/
+        /** reference al tipo di dato puntato dall'iteratore*/
         typedef const element&            reference;
 
         /**
          * @brief Costruttore di default
          *
-         * Inizializza il puntatore dell'iteratore a nullptr
+         * Inizializza il puntatore dell'iteratore
          */
         const_iterator(): ptr(nullptr) {}
 
@@ -421,10 +418,10 @@ public:
         /**
          * @brief Operatore di assegnamento
          *
-         * Esegue una copia del puntatore, la memorizza nell'oggetto prefisso e ritorna l'elemento
+         * Esegue una copia del puntatore other e ritorna l'elemento appena creato
          *
          * @param other iteratore di cui eseguire la copia
-         * @return
+         * @return reference all'oggetto copiato
          */
         const_iterator& operator=(const const_iterator &other) {
             const_iterator tmp(other);
@@ -490,10 +487,10 @@ public:
         /**
          * @brief Operatore di uguaglianza
          *
-         * Confronta due iteratori tra di loro, ritorna true se puntano allo stesso nodo
+         * Confronta due iteratori tra di loro, ritorna true se puntano allo stessa cella
          *
          * @param other iteratore di confronto
-         * @return true sse i puntatori degli iteratori stanno puntando allo stesso nodo
+         * @return true sse i puntatori degli iteratori stanno puntando allo stessa cella
          */
         bool operator==(const const_iterator &other) const {
             return ptr == other.ptr;
@@ -505,7 +502,7 @@ public:
          * Confronta due iteratori tra di loro, ritorna true se sono diversi
          *
          * @param other iteratore di confronto
-         * @return true sse i puntatori degli iteratori stanno puntando a nodi diversi
+         * @return true sse i puntatori degli iteratori stanno puntando a celle diverse
          */
         bool operator!=(const const_iterator &other) const {
             return !(ptr == other.ptr);
@@ -521,7 +518,7 @@ public:
          *
          * Costruttore usato dalla classe friend per costruire l'iteratore a partire dal puntatore al nodo
          *
-         * @param p puntatore al nodo con cui viene inizializzato l'iteratore
+         * @param p puntatore alla cella con cui viene inizializzato l'iteratore
          */
         const_iterator(const nodo* p): ptr(p) {}
 
@@ -530,7 +527,7 @@ public:
     /**
      * @brief Ritorna un iteratore che punta alla testa della matrice
      *
-     * Ritorna l'iteratore al "primo" elemento memorizzato realmente nella matrice
+     * Ritorna l'iteratore al "primo" elemento realmente memorizzato nella matrice
      *
      * @return iteratore al primo elemento della matrice
      */
@@ -541,7 +538,7 @@ public:
     /**
      * @brief Ritorna un iteratore all'ultimo elemento della matrice
      *
-     * L'iteratore ritornato fa fine ad un iteratore che identifica la fine della matrice
+     * L'iteratore ritornato identifica la fine della matrice
      *
      * @return iteratore all'ultimo elemento della matrice
      */

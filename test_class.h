@@ -12,7 +12,7 @@ public:
     /**
      * @brief Costruttore di default
      *
-     * Inizializza il puntatore a nullptr e l'intero al volore di default
+     * Inizializza la classe
      */
     test_class();
 
@@ -57,7 +57,7 @@ public:
     /**
      * @brief Distruttore
      *
-     * Elimina i dati dallo heap per evitare memory leak
+     * Elimina i dati memorizzati
      */
     ~test_class();
 
@@ -76,7 +76,7 @@ public:
      *
      * Ritorna il valore memorizzato nella classe
      *
-     * @return
+     * @return valore memorizzato nella clase
      */
     int get_value() const;
 
@@ -85,7 +85,7 @@ public:
      *
      * Ritorna il valore puntato dal puntatore
      *
-     * @return
+     * @return valore memorizzato nel puntatore della classe
      */
     int get_value_ptr() const;
 
